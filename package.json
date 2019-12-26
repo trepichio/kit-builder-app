@@ -1,0 +1,25 @@
+{
+  "name": "kit-builder-app",
+  "version": "1.0.0",
+  "description": "installer for MBD Kits",
+  "main": "index.js",
+  "dependencies": {
+    "arch": "^2.1.1",
+    "node-firebird": "^0.8.9",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trepichio/kit-builder-app.git"
+  },
+  "author": "João Trepichio",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/trepichio/kit-builder-app/issues"
+  },
+  "homepage": "https://github.com/trepichio/kit-builder-app#readme"
+}
