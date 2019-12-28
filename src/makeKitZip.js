@@ -15,7 +15,7 @@ module.exports = () => {
 
   logger.info("makeKitZip -> Let's make the Zip archive for this Kit.")
   for (const folder of folders) {
-    kitZip.addLocalFolder(`C:\\MBD\\${folder}`, `${rootDir}\\${folder}`)
+    kitZip.addLocalFolder(`C:\\MBD\\${folder}`, `${rootDir}\\${folder}`, (filename) => new RegExp('^(.(?!.*\.bak$))*$', 'gi').test(filename))
     logger.info(`makeKitZip -> ${folder} added to kitZip archive.`)
   }
 
