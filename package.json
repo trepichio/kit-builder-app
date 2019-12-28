@@ -6,6 +6,9 @@
   "dependencies": {
     "arch": "^2.1.1",
     "node-firebird": "^0.8.9",
+    "nodemailer": "^6.4.2",
+    "path": "^0.12.7",
+    "pkg": "^4.4.2",
     "winston": "^3.2.1"
   },
   "devDependencies": {},
