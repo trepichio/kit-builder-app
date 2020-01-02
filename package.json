@@ -5,6 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "arch": "^2.1.1",
+    "config": "^3.2.4",
+    "find-remove": "^2.0.0",
     "node-firebird": "^0.8.9",
     "nodemailer": "^6.4.2",
     "path": "^0.12.7",
