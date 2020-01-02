@@ -20,7 +20,7 @@ module.exports = async () => {
     await exec([kitInstaller, '--target', 'host', '--output', `${kitDestination}\\kit-${customerName}-${kitName}-V${kitVersion}-cr-${now}.exe`])
 
     // do something  after making .exe at its ftp location
-    //cleanWorkspace()
+    cleanWorkspace()
 
     sendEmail({ cliente: customerName, kitName, kitVersion, now, kitDestination })
 
