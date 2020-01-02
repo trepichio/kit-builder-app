@@ -1,28 +1,31 @@
 const { exec } = require('pkg')
 const path = require('path')
 const sendEmail = require('./ethereal')
+const config = require('config')
+const logger = require('./logger')
+const cleanWorkspace = require('./cleanWorkspace')
 
-const main = async () => {
+module.exports = async () => {
+  const { customerName, kitName, kitVersion, test } = config.get('Builder').preparation
+  const { ipServer, dirFtpSuporte } = config.get('Builder').repositoryConfig
   const kitInstaller = path.resolve('..', '..', 'kit-installer', 'package.json')
-  const cliente = 'CLIENTE'
-  const kitName = 'SIAC'
-  const kitVersion = 'v19.09.30-4488'
+  const kitDestination = path.join(driverLetter, dirFtpSuporte, 'KITs', customerName)
   const now = new Date().toLocaleDateString()
-  const kitDestination = path.resolve('..', '..', '..', 'KITS', cliente)
-  console.log("TCL: main -> kitDestination", kitDestination)
 
-  console.log("TCL: kitInstaller", kitInstaller)
+
+  logger.info("pkg-installer -> kitDestination: %s", kitDestination)
+  logger.info("pkg-installer -> kitInstaller: %s", kitInstaller)
 
   try {
-    await exec([kitInstaller, '--target', 'host', '--output', `${kitDestination}\\kit-${cliente}-${kitName}-${kitVersion}-cr-${now}.exe`])
+    await exec([kitInstaller, '--target', 'host', '--output', `${kitDestination}\\kit-${customerName}-${kitName}-V${kitVersion}-cr-${now}.exe`])
 
-    // do something with app.exe, run, test, upload, deploy, etc
-    sendEmail({ cliente, kitName, kitVersion, now, kitDestination })
+    // do something  after making .exe at its ftp location
+    //cleanWorkspace()
+
+    sendEmail({ cliente: customerName, kitName, kitVersion, now, kitDestination })
+
   } catch (error) {
-
-    console.log(error);
+    logger.info(error);
   }
 
 }
-
-main()
