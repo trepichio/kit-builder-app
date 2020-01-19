@@ -4,7 +4,10 @@
   "description": "builder for MBD Kits",
   "main": "index.js",
   "dependencies": {
+    "@hapi/joi": "^17.0.2",
     "arch": "^2.1.1",
+    "firebase": "^7.7.0",
+    "firebase-queue": "^1.6.1",
     "node-firebird": "^0.8.9",
     "winston": "^3.2.1"
   },
