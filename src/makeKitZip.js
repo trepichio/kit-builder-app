@@ -1,14 +1,15 @@
 const AdmZip = require('adm-zip')
-const config = require('config')
+// const config = require('config')
 const logger = require('./logger')
 const path = require('path')
 
-module.exports = () => {
+module.exports = (data) => {
 
   const kitZip = new AdmZip()
 
   const standardFolders = ['Acesso', 'Install', 'DB']
-  const { rootDir, customerName, kitPrograms, kitName, kitVersion, dateCreated } = config.get('Builder').preparation
+  // const { rootDir, customerName, kitPrograms, kitName, kitVersion, dateCreated } = config.get('Builder').preparation
+  const { rootDir, customerName, kitPrograms, kitName, kitVersion, dateCreated } = data
 
   const kitProgramsPath = kitPrograms.map(program => `Sistemas\\${program}`)
   const folders = [...standardFolders, ...kitProgramsPath]
