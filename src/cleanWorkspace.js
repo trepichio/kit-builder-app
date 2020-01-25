@@ -5,17 +5,28 @@ const config = require('config')
 const path = require('path')
 
 
-const main = () => {
+module.exports = (data) => {
   const { dirRootName, dirSysName, dirDBName, dirDBS, driverLetter } = config.get('Builder').builderConfig
-  const { customerName, kitName, kitVersion, kitPrograms, test } = config.get('Builder').preparation
+  // const { customerName, kitName, kitVersion, kitPrograms, test } = config.get('Builder').preparation
+  const { customerName, kitName, kitVersion, kitPrograms, test, dateCreated } = data
+
+  // const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+  // const requestTime = new Date(dateCreated).toLocaleString('pt-br', options)
+
   const { dbExts, dbNames } = config.get('Builder').dbConfig
 
   const dbWDir = path.join(driverLetter, dirRootName, dirDBName)
   const sysWDir = path.join(driverLetter, dirRootName, dirSysName)
+  const kitInstallerZip = path.resolve('..', '..', 'kit-installer', 'installer', 'assets')
+  const zipPrefix = 'kit-'
+
 
   logger.info(`Cleaning ${dbWDir}`)
   const deletedFiles = findRemoveSync(dbWDir, { files: dbNames[kitName], extensions: dbExts, test })
   logger.info(`Successfully deleted the following files: ${JSON.stringify(deletedFiles)}`)
+
+  const deletedZip = findRemoveSync(kitInstallerZip, { prefix: zipPrefix, extensions: [".zip", "rar"], test: false })
+  logger.info(`Successfully deleted the following files: ${JSON.stringify(deletedZip)}`)
 
 
 
@@ -34,6 +45,6 @@ const main = () => {
     logger.info(`Folder ${program} renamed sucessfully.`)
   }
 
-}
 
-main()
+
+}
