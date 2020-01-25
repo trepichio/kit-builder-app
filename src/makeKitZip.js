@@ -26,7 +26,7 @@ module.exports = (data) => {
     logger.info(`makeKitZip -> ${folder} added to kitZip archive.`)
   }
 
-  const filename = `${customerName}-${kitName}-V${kitVersion}-CR${requestTime}.zip`
+  const filename = `kit-${customerName}-${kitName}-V${kitVersion}-CR${requestTime}.zip`
   const assetsFolder = path.resolve('../../kit-installer/installer/assets/')
 
   logger.info("makeKitZip -> Let's try to write the zip file on disk")
