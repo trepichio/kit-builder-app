@@ -4,6 +4,8 @@
   "description": "builder for MBD Kits",
   "main": "index.js",
   "dependencies": {
+    "@hapi/joi": "^17.0.2",
+    "@kaliber/firebase-queue": "^1.2.0",
     "adm-zip": "^0.4.13",
     "arch": "^2.1.1",
     "config": "^3.2.4",
