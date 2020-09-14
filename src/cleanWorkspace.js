@@ -34,6 +34,8 @@ module.exports = async (data) => {
 
   const deletedZip = findRemoveSync(kitInstallerZip, { prefix: zipPrefix, extensions: [".zip", "rar"], test: false })
   logger.info(`Successfully deleted the following files: ${JSON.stringify(deletedZip)}`)
+  const deletedJSON = findRemoveSync(kitInstallerZip, { extensions: [".json"], test: false })
+  logger.info(`Successfully deleted the following files: ${JSON.stringify(deletedJSON)}`)
 
 
 
