@@ -1,25 +1,37 @@
 const Firebird = require('node-firebird')
 const logger = require('./logger')
+const config = require('config')
+const canAccess = require('./helpers/canAccess')
 
 
-var options = {};
-
-// options.host = '127.0.0.1';
-options.host = 'localhost';
-options.port = 3050;
-// options.database = 'C:\\MBD-CARDAPIO\\DB\\ARCOIRIS.fdb';
-options.database = 'C:\\MBD\\DB\\ARCOIRIS.FDB';
-options.user = 'SYSDBA';
-options.password = 'sysdbambd';
-options.lowercase_keys = false; // set to true to lowercase keys
-options.role = null;            // default
-options.pageSize = 4096;        // default when creating database
 
 // const valuesCLIFOR = ['SORVETERIA FERRAZ', '13550693000138', '332084053114', 'EDSON FERRAZ REIS', 'GUARATINGUETA', 'SP', null, 'RUA ALBERTO BARBETA', 47, 'PEDREGULHO', 12515040, 'EDSON', null, '3527207', 307, new Date(), 'E']
 
 // const valuesFIRMA = ['13550693000138', '332084053114', 'EDSON FERRAZ REIS', 'GUARATINGUETA', 'SP', null, 'RUA ALBERTO BARBETA', 47, null, 'PEDREGULHO', 12515040, 'EDSON', null, null]
 
-module.exports = (data) => {
+module.exports = async (data) => {
+  const { dbExts, dbNames, dbPath } = config.get('Builder').dbConfig
+  var dbOptions = config.util.toObject(config.get('Builder').dbConfig.options)
+
+  // var options = {};
+
+  // options.host = '127.0.0.1';
+  // options.host = 'localhost';
+  // options.port = 3050;
+  // options.database = '';
+  // options.user = 'SYSDBA';
+  // options.password = 'sysdbambd';
+  // options.lowercase_keys = false; // set to true to lowercase keys
+  // options.role = null;            // default
+  // options.pageSize = 4096;        // default when creating database
+
+  for (const extension of dbExts) {
+    let databaseFile = `${dbPath}\\${dbNames[data.kitName][0]}${extension}`;
+    if (await canAccess(databaseFile)) {
+      dbOptions.database = databaseFile;
+      break;
+    }
+  }
 
   const { dateCreated } = data
 
@@ -38,7 +50,7 @@ module.exports = (data) => {
   const valuesCLIFOR = [FANTASIA, CNPJ, IE, RAZAO_SOCIAL, CIDADE, UF, FAX, ENDERECO, N, BAIRRO, CEP, CONTATO, TELEFONE, IBGE, MUNICIPIO_ID, requestTime, tipoCliFor]
 
   return new Promise((resolve, reject) => {
-    Firebird.attach(options, function (err, db) {
+    Firebird.attach(dbOptions, function (err, db) {
 
       if (err)
         throw err;
@@ -60,7 +72,7 @@ module.exports = (data) => {
 
         }
         else {
-          console.log("No results");
+          logger.info("No results");
 
           try {
             //OK. It's a clean database, let's register the customer info
