@@ -4,6 +4,8 @@ const path = require('path')
 const config = require('config')
 const logger = require('./logger')
 const backupConfigIniFiles = require("./backupConfigIniFiles")
+const trycatchFn = require('./helpers/trycatchFn')
+const { trueCasePathSync } = require('true-case-path')
 
 
 /**
@@ -26,7 +28,8 @@ module.exports = async (data) => {
   // const server = "localhost"
   // const shared_printer_path = "EPSON"
   // const database_folder = "C:\\MBD\\DB\\"
-  const database_folder = dbPath
+  // const database_folder = dbPath
+  const database_folder = `${data.driverLetter}\\${data.rootDir}\\DB\\`
 
   logger.info("Setting up config files.")
   // const aFolders = ["Retaguarda", "Lança-Touch", "Frente Touch"]
@@ -34,11 +37,23 @@ module.exports = async (data) => {
 
   switch (kitName) {
     case 'SIAC':
-      for (const program of kitPrograms) {
-        let pathProgram = path.join(baseDir, program)
-        logger.info(`Reading Config file of folder ${program}`)
-        //Windows is case insensitive when reading file but other plataforms are not
-        const configIni = ini.parse(fs.readFileSync(`${pathProgram}/Config.ini`, "utf-8"))
+      for (const { name, version } of kitPrograms) {
+        let pathProgram = path.join(baseDir, name)
+        try {
+          logger.info(`creating a backup file for Config.ini in ${pathProgram}`)
+          await backupConfigIniFiles(pathProgram, 'config.ini')
+        } catch (error) {
+          logger.error(`Cannot continue processing the job without doing backup of config.ini of ${pathProgram}`)
+        }
+
+        const iniFilePath = await trycatchFn(trueCasePathSync, `${pathProgram}\\config.ini`)
+        logger.info("TCL: iniFilePath", iniFilePath)
+
+        if (!iniFilePath) throw `modifyConfigIni -> iniFilePath for ${kitName}-${name} is undefined`
+        try {
+          logger.info(`Reading Config file of folder ${name}`)
+          //Windows is case insensitive when reading file but other plataforms are not
+          const configIni = ini.parse(fs.readFileSync(iniFilePath, "utf-8"))
 
           if (configIni.CONFBASE) {
             configIni.CONFBASE.LOCAL = true
@@ -54,22 +69,37 @@ module.exports = async (data) => {
           logger.info(`Writing Modified Config file of folder ${name}`)
           fs.writeFileSync(`${pathProgram}/Config_modified.ini`, ini.stringify(configIni))
 
-        backupConfigIniFiles(pathProgram)
           logger.info(`Renaming modified file for usage`)
-        fs.renameSync(`${pathProgram}/Config_modified.ini`, `${pathProgram}/Config.ini`)
+          fs.renameSync(`${pathProgram}/Config_modified.ini`, iniFilePath)
 
+        } catch (error) {
+          logger.error(`Cannot modify config.ini from ${pathProgram} because of error: ${error}`)
+        }
       }
 
       break;
 
     case 'CARDAPIO':
       // aFolders.forEach(folder => {
-      for (const program of kitPrograms) {
+      for (const { name, version } of kitPrograms) {
         // let path = `${baseDir}/${program}`
-        let pathProgram = path.join(baseDir, program)
-        logger.info(`Reading Config file of folder ${program}`)
-        //Windows is case insensitive when reading file but other plataforms are not
-        const configIni = ini.parse(fs.readFileSync(`${pathProgram}/Config.ini`, "utf-8"))
+        let pathProgram = path.join(baseDir, name)
+        try {
+          logger.info(`creating a backup file for Config.ini in ${pathProgram}`)
+          await backupConfigIniFiles(pathProgram, 'config.ini')
+        } catch (error) {
+          logger.error(`Cannot continue processing the job without doing backup of config.ini of ${pathProgram}`)
+        }
+        const iniFilePath = await trycatchFn(trueCasePathSync, `${pathProgram}\\config.ini`)
+        logger.info("TCL: iniFilePath", iniFilePath)
+
+
+        if (!iniFilePath) throw `modifyConfigIni -> iniFilePath for ${kitName}-${name} is undefined`
+        try {
+
+          logger.info(`Reading Config file of folder ${name}`)
+          //Windows is case insensitive when reading file but other plataforms are not
+          const configIni = ini.parse(fs.readFileSync(iniFilePath, "utf-8"))
 
           if (configIni.CONFBASE) {
             configIni.CONFBASE.LOCAL = true
@@ -117,15 +147,16 @@ module.exports = async (data) => {
                 configIni.CONFCAIXA.PORTA = `\\\\${server}\\${shared_printer_path}`
               }
            */
-        logger.info(`Writing Modified Config file of folder ${program}`)
-        fs.writeFileSync(`${pathProgram}/Config_modified.ini`, ini.stringify(configIni))
+          logger.info(`Writing Modified Config file of folder ${name}`)
+          fs.writeFileSync(`${pathProgram}/Config_modified.ini`, ini.stringify(configIni))
 
-        logger.info(`creating a backup file for Config.ini in ${pathProgram}`)
-        backupConfigIniFiles(pathProgram)
-        logger.info(`Renaming modified file for usage`)
-        fs.renameSync(`${pathProgram}/Config_modified.ini`, `${pathProgram}/Config.ini`)
+          logger.info(`Renaming modified file for usage`)
+          fs.renameSync(`${pathProgram}/Config_modified.ini`, iniFilePath)
+        }
+        catch (error) {
+          logger.error(`Cannot modify config.ini from ${pathProgram} because of error: ${error}`)
+        }
       }
-
       break;
   }
 
