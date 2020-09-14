@@ -14,7 +14,9 @@ module.exports = data => {
   const kitZip = new AdmZip();
 
   // const standardFolders = ['Acesso', 'Install', 'DB']
-  const { standardFolders } = config.get('Builder').builderConfig
+  const { standardFolders, dirRootName, driverLetter } = config.get(
+    "Builder"
+  ).builderConfig;
   // const { rootDir, customerName, kitPrograms, kitName, kitVersion, dateCreated } = config.get('Builder').preparation
   const {
     rootDir,
@@ -32,14 +34,19 @@ module.exports = data => {
   const requestTime = new Date(dateCreated).toLocaleString("pt-br", opt);
   logger.info(`makeKitZip -> requestTime ${requestTime}`);
 
+  const kitProgramsPath = kitPrograms.map(
+    ({ name, version }) => `Sistemas\\${name}`
+  );
+  const folders = [...validas, ...standardFolders, ...kitProgramsPath];
 
-  const kitProgramsPath = kitPrograms.map(program => `Sistemas\\${program}`)
-  const folders = [...standardFolders, ...kitProgramsPath]
-
-  logger.info("makeKitZip -> Let's make the Zip archive for this Kit.")
+  logger.info("makeKitZip -> Let's make the Zip archive for this Kit.");
   for (const folder of folders) {
-    kitZip.addLocalFolder(`C:\\MBD\\${folder}`, `${rootDir}\\${folder}`, (filename) => new RegExp('^(.(?!.*\.bak$))*$', 'gi').test(filename))
-    logger.info(`makeKitZip -> ${folder} added to kitZip archive.`)
+    kitZip.addLocalFolder(
+      `${driverLetter}\\${dirRootName}\\${folder}`,
+      `${rootDir}\\${folder}`,
+      filename => new RegExp("^(.(?!.*.bak$))*$", "gi").test(filename)
+    );
+    logger.info(`makeKitZip -> ${folder} added to kitZip archive.`);
   }
 
   const filename = `kit-${customerName}-${kitName}-V${kitVersion}-CR${requestTime}.zip`;
