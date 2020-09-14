@@ -1,8 +1,11 @@
 const logger = require('./logger')
+const canAccess = require('./helpers/canAccess')
+const trycatchFn = require('./helpers/trycatchFn')
 const findRemoveSync = require('find-remove')
 const fs = require('fs')
 const config = require('config')
 const path = require('path')
+const { trueCasePathSync } = require('true-case-path')
 
 /**
  ** Cleanup of files (ini, databases, etc) and restores working folders to its original paths
@@ -40,18 +43,40 @@ module.exports = async (data) => {
 
 
   logger.info("Renaming working folders back to original")
-  for (const program of kitPrograms) {
-    const originalPath = path.join(sysWDir, `${kitName}-v${kitVersion}-${program}`)
-    const workingPath = path.join(sysWDir, program)
+  for (const { name, version } of kitPrograms) {
+    const originalPath = path.join(sysWDir, `${kitName}-v${version}-${name}`)
+    const workingPath = path.join(sysWDir, name)
 
-    logger.info(`Replacing modified content of ${workingPath}\\config.ini by config.ini.BAK`)
-    const buffer = fs.readFileSync(path.join(workingPath, 'config.ini.BAK'))
-    fs.writeFileSync(path.join(workingPath, 'config.ini'), buffer)
-    logger.info("config.ini has its original contents now. ")
+    logger.info('Looking for .ini.BAK files in order to replace original .ini content from them')
+    const bakFilePath = await trycatchFn(trueCasePathSync, `${workingPath}\\config.ini.BAK`)
+    console.log("TCL: bakFilePath", bakFilePath)
+    const iniFilePath = await trycatchFn(trueCasePathSync, `${workingPath}\\config.ini`)
+    console.log("TCL: iniFilePath", iniFilePath)
 
-    logger.info(`Renaming folder ${program} to its original ${originalPath}`)
-    fs.renameSync(workingPath, originalPath)
-    logger.info(`Folder ${program} renamed sucessfully.`)
+    if (bakFilePath && iniFilePath) {
+
+      try {
+        logger.info(`Replacing modified content of ${workingPath}\\config.ini by config.ini.BAK`)
+        // const buffer = fs.readFileSync(path.join(workingPath, 'config.ini.BAK'))
+        const bufferBak = fs.readFileSync(bakFilePath)
+        // fs.writeFileSync(path.join(workingPath, 'config.ini'), buffer)
+        fs.writeFileSync(iniFilePath, bufferBak)
+        logger.info("config.ini has its original contents now. ")
+
+      } catch (error) {
+        logger.error(`Failed to revert content of config.ini from its bak file because of error: ${error}`)
+      }
+    }
+
+
+    try {
+      logger.info(`Renaming folder ${name} to its original ${originalPath}`)
+      fs.renameSync(workingPath, originalPath)
+      logger.info(`Folder ${name} renamed sucessfully.`)
+
+    } catch (error) {
+      logger.error(`Failed to rename folders back to its originals because of error: ${error}`)
+    }
   }
 
 
