@@ -4,8 +4,15 @@ const fs = require('fs')
 const config = require('config')
 const path = require('path')
 
-
-module.exports = (data) => {
+/**
+ ** Cleanup of files (ini, databases, etc) and restores working folders to its original paths
+ *
+ * @author João Trepichio
+ * @async
+ * @function cleanWorkspace
+ * @param {Object} data - object that comes from task queue
+ */
+module.exports = async (data) => {
   const { dirRootName, dirSysName, dirDBName, dirDBS, driverLetter } = config.get('Builder').builderConfig
   // const { customerName, kitName, kitVersion, kitPrograms, test } = config.get('Builder').preparation
   const { customerName, kitName, kitVersion, kitPrograms, test, dateCreated } = data
