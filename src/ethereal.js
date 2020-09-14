@@ -1,3 +1,27 @@
+/**
+ * @author João Trepichio
+ * @async
+ * @function sendEmail
+ * @param  {Object} kit - task object from queue
+ * @param  {String} filename - generated Kit filename
+ * @returns {String} urlPreview of TestEmail
+ */
+module.exports = async (kit, filename) => {
+  // Use at least Nodemailer v4.1.0
+  const nodemailer = require("nodemailer");
+  const logger = require("./logger");
+  const config = require("config");
+
+  const {
+    ftpURL,
+    rootFtp,
+    dirFtpSuporte,
+    dirSuporte,
+    dirFtpKits,
+    dirKits,
+    ipServer,
+    portServer
+  } = config.get("Builder").repositoryConfig;
 
 
 module.exports = async (kit) => {
