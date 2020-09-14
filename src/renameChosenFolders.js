@@ -15,13 +15,13 @@ module.exports = ({ customerName, kitName, kitVersion, kitPrograms, test }) => {
 
 
   logger.info("Renaming original folders to working name")
-  for (const program of kitPrograms) {
-    const originalPath = path.join(sysWDir, `${kitName}-v${kitVersion}-${program}`)
-    const workingPath = path.join(sysWDir, program)
+  for (const { name, version } of kitPrograms) {
+    const originalPath = path.join(sysWDir, `${kitName}-v${version}-${name}`)
+    const workingPath = path.join(sysWDir, name)
 
-    logger.info(`Renaming folder ${kitName}-v${kitVersion}-${program} to ${program}`)
+    logger.info(`Renaming folder ${kitName}-v${version}-${name} to ${name}`)
     fs.renameSync(originalPath, workingPath)
-    logger.info(`Folder ${kitName}-v${kitVersion}-${program} renamed sucessfully.`)
+    logger.info(`Folder ${kitName}-v${version}-${name} renamed sucessfully.`)
   }
 
 }
