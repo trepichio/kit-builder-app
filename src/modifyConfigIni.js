@@ -5,7 +5,16 @@ const config = require('config')
 const logger = require('./logger')
 const backupConfigIniFiles = require("./backupConfigIniFiles")
 
-module.exports = (data) => {
+
+/**
+ ** Modifies some params in config.ini files for each program of Kit
+ *
+ * @author João Trepichio
+ * @function modifyConfigIni
+ * @param  {Object} data - task object from queue
+ */
+
+module.exports = async (data) => {
   // const { kitName, kitPrograms, server } = config.get('Builder').preparation
   const { kitName, kitPrograms, server } = data
   const { dbPath } = config.get('Builder').dbConfig
@@ -31,22 +40,22 @@ module.exports = (data) => {
         //Windows is case insensitive when reading file but other plataforms are not
         const configIni = ini.parse(fs.readFileSync(`${pathProgram}/Config.ini`, "utf-8"))
 
-        if (configIni.CONFBASE) {
-          configIni.CONFBASE.LOCAL = true
-          configIni.CONFBASE.SERVER = `${server}`
-          configIni.CONFBASE.PATH = `${database_folder}`
-        }
-        if (configIni.MBDDOCS) {
-          configIni.MBDDOCS.LOCAL = true
-          configIni.MBDDOCS.SERVER = `${server}`
-          configIni.MBDDOCS.PATH = `${database_folder}`
-        }
+          if (configIni.CONFBASE) {
+            configIni.CONFBASE.LOCAL = true
+            configIni.CONFBASE.SERVER = `${server}`
+            configIni.CONFBASE.PATH = `${database_folder}`
+          }
+          if (configIni.MBDDOCS) {
+            configIni.MBDDOCS.LOCAL = true
+            configIni.MBDDOCS.SERVER = `${server}`
+            configIni.MBDDOCS.PATH = `${database_folder}`
+          }
 
-        logger.info(`Writing Modified Config file of folder ${program}`)
-        fs.writeFileSync(`${pathProgram}/Config_modified.ini`, ini.stringify(configIni))
+          logger.info(`Writing Modified Config file of folder ${name}`)
+          fs.writeFileSync(`${pathProgram}/Config_modified.ini`, ini.stringify(configIni))
 
         backupConfigIniFiles(pathProgram)
-        logger.info(`Renaming modified file for usage`)
+          logger.info(`Renaming modified file for usage`)
         fs.renameSync(`${pathProgram}/Config_modified.ini`, `${pathProgram}/Config.ini`)
 
       }
@@ -62,52 +71,52 @@ module.exports = (data) => {
         //Windows is case insensitive when reading file but other plataforms are not
         const configIni = ini.parse(fs.readFileSync(`${pathProgram}/Config.ini`, "utf-8"))
 
-        if (configIni.CONFBASE) {
-          configIni.CONFBASE.LOCAL = true
-          configIni.CONFBASE.SERVER = `${server}`
-          configIni.CONFBASE.PATH = `${database_folder}`
-        }
-        if (configIni.BASEFECHA) {
-          configIni.BASEFECHA.LOCALF = true
-          configIni.BASEFECHA.SERVERF = `${server}`
-          configIni.BASEFECHA.PATHF = `${database_folder}`
-        }
-        if (configIni.BASEOLD) {
-          configIni.BASEOLD.LOCALO = true
-          configIni.BASEOLD.SERVERO = `${server}`
-          configIni.BASEOLD.PATHO = `${database_folder}`
-        }
-        if (configIni.MBDDOCS) {
-          configIni.MBDDOCS.LOCAL = true
-          configIni.MBDDOCS.SERVER = `${server}`
-          configIni.MBDDOCS.PATH = `${database_folder}`
-        }
-        if (configIni.DADOSEMPRESA) {
-          configIni.DADOSEMPRESA.NOME = RAZAOSOCIAL
-          configIni.DADOSEMPRESA.CNPJ = CNPJ
-          configIni.DADOSEMPRESA.ENDERECO = `${ENDERECO} ${N}`
-          configIni.DADOSEMPRESA.ADICIONAL = `${BAIRRO} - ${CIDADE}//${UF}`
-          configIni.DADOSEMPRESA.TELEFONE = TELEFONE
-        }
-        if (configIni.DADOSSINTEGRA) {
-          configIni.DADOSSINTEGRA.CNPJ = CNPJ
-          configIni.DADOSSINTEGRA.IE = IE
-          configIni.DADOSSINTEGRA.IM = IM
-          configIni.DADOSSINTEGRA.NomeCont = RAZAOSOCIAL
-          configIni.DADOSSINTEGRA.Municipio = CIDADE
-          configIni.DADOSSINTEGRA.RUA = ENDERECO
-          configIni.DADOSSINTEGRA.Numero = N
-          configIni.DADOSSINTEGRA.COMPLEMENTO = COMPLEMENTO
-          configIni.DADOSSINTEGRA.BAIRRO = BAIRRO
-          configIni.DADOSSINTEGRA.UF = UF
-          configIni.DADOSSINTEGRA.CONTATO = CONTATO
-          configIni.DADOSSINTEGRA.CEP = CEP
-          configIni.DADOSSINTEGRA.TELEFONE = TELEFONE
-        }
-        /*     if (configIni.CONFCAIXA) {
-              configIni.CONFCAIXA.PORTA = `\\\\${server}\\${shared_printer_path}`
-            }
-         */
+          if (configIni.CONFBASE) {
+            configIni.CONFBASE.LOCAL = true
+            configIni.CONFBASE.SERVER = `${server}`
+            configIni.CONFBASE.PATH = `${database_folder}`
+          }
+          if (configIni.BASEFECHA) {
+            configIni.BASEFECHA.LOCALF = true
+            configIni.BASEFECHA.SERVERF = `${server}`
+            configIni.BASEFECHA.PATHF = `${database_folder}`
+          }
+          if (configIni.BASEOLD) {
+            configIni.BASEOLD.LOCALO = true
+            configIni.BASEOLD.SERVERO = `${server}`
+            configIni.BASEOLD.PATHO = `${database_folder}`
+          }
+          if (configIni.MBDDOCS) {
+            configIni.MBDDOCS.LOCAL = true
+            configIni.MBDDOCS.SERVER = `${server}`
+            configIni.MBDDOCS.PATH = `${database_folder}`
+          }
+          if (configIni.DADOSEMPRESA) {
+            configIni.DADOSEMPRESA.NOME = RAZAOSOCIAL
+            configIni.DADOSEMPRESA.CNPJ = CNPJ
+            configIni.DADOSEMPRESA.ENDERECO = `${ENDERECO} ${N}`
+            configIni.DADOSEMPRESA.ADICIONAL = `${BAIRRO} - ${CIDADE}//${UF}`
+            configIni.DADOSEMPRESA.TELEFONE = TELEFONE
+          }
+          if (configIni.DADOSSINTEGRA) {
+            configIni.DADOSSINTEGRA.CNPJ = CNPJ
+            configIni.DADOSSINTEGRA.IE = IE
+            configIni.DADOSSINTEGRA.IM = IM
+            configIni.DADOSSINTEGRA.NomeCont = RAZAOSOCIAL
+            configIni.DADOSSINTEGRA.Municipio = CIDADE
+            configIni.DADOSSINTEGRA.RUA = ENDERECO
+            configIni.DADOSSINTEGRA.Numero = N
+            configIni.DADOSSINTEGRA.COMPLEMENTO = COMPLEMENTO
+            configIni.DADOSSINTEGRA.BAIRRO = BAIRRO
+            configIni.DADOSSINTEGRA.UF = UF
+            configIni.DADOSSINTEGRA.CONTATO = CONTATO
+            configIni.DADOSSINTEGRA.CEP = CEP
+            configIni.DADOSSINTEGRA.TELEFONE = TELEFONE
+          }
+          /*     if (configIni.CONFCAIXA) {
+                configIni.CONFCAIXA.PORTA = `\\\\${server}\\${shared_printer_path}`
+              }
+           */
         logger.info(`Writing Modified Config file of folder ${program}`)
         fs.writeFileSync(`${pathProgram}/Config_modified.ini`, ini.stringify(configIni))
 
