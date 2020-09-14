@@ -15,6 +15,7 @@
     "nodemailer": "^6.4.2",
     "path": "^0.12.7",
     "pkg": "^4.4.2",
+    "true-case-path": "^2.2.1",
     "winston": "^3.2.1"
   },
   "devDependencies": {},
