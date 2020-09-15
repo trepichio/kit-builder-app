@@ -154,7 +154,13 @@ async function processTask(
     logger.info("=======  90%  =======")
 
     try {
-      fs.writeFileSync(lastTaskFile, `${kitName}-v${kitVersion} DONE!`)
+      fs.writeFileSync(
+        lastTaskFile,
+        JSON.stringify({
+          message: `${kitName}-v${kitVersion} DONE!`,
+          status: "done"
+        })
+      );
     } catch (error) {
       logger.error(
         `The job for ${kitName}-v${kitVersion} IS DONE BUT it could not be written in lastTask.json. You should check permissions or whatever reason to avoid problems with cleanup process whenever process shutdowns`
