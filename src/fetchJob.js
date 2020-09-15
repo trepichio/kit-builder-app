@@ -165,8 +165,9 @@ async function processTask(
 }
 
 function reportError(e) {
-  logger.error(e)
-  throw e.message
+  logger.error(e);
+  // throw e.message
+  throw e;
 }
 
 process.on("message", async function(msg) {
