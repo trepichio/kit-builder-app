@@ -136,9 +136,9 @@ async function processTask(
     logger.info("=======  40%  =======");
     await makeKitZip(task);
 
-    await setProgress(50)
-    logger.info("=======  50%  =======")
-    await packKit(task)
+    await setProgress(50);
+    logger.info("=======  50%  =======");
+    await copyJobFileToAssets({ _id: snapshot.key, ...task });
 
     await setProgress(60)
     logger.info("=======  60%  =======")
