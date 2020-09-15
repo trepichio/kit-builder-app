@@ -150,8 +150,12 @@ async function processTask(
     // logger.info("=======  70%  =======")
     // await sendEmail(task)
 
-    await setProgress(90)
-    logger.info("=======  90%  =======")
+    await setProgress(80);
+    logger.info("=======  80%  =======");
+    await updateKits({ _id: snapshot.key, ...task }, { done: true });
+
+    await setProgress(90);
+    logger.info("=======  90%  =======");
 
     try {
       fs.writeFileSync(
