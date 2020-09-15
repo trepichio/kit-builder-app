@@ -127,8 +127,6 @@ async function processTask(
         await modifyParamsInDBSIAC(task);
         break;
       default:
-
-    await setProgress(40);
         break;
     }
 
@@ -140,9 +138,12 @@ async function processTask(
     logger.info("=======  50%  =======");
     await copyJobFileToAssets({ _id: snapshot.key, ...task });
 
-    await setProgress(60)
-    logger.info("=======  60%  =======")
-    await cleanWorkspace(task)
+    await setProgress(60);
+    logger.info("=======  60%  =======");
+    const filename = await packKit(task);
+    logger.info(
+      `======================== TCL: processTask -> filename ${filename}`
+    );
 
     // await cleanWorkspace(task)
 
