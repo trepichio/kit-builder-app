@@ -1,15 +1,17 @@
-const logger = require('./logger')
-const renameChosenFolders = require('./renameChosenFolders')
-const modifyConfigIni = require('./modifyConfigIni')
-const makeKitZip = require('./makeKitZip')
-const copyFromChosenDB = require('./copyFromChosenDB')
-const registerCustomerInDBCARDAPIO = require('./registerCustomerInDBCARDAPIO')
-const trycatchFn = require('./helpers/trycatchFn')
-const packKit = require('./pkg-installer')
-const cleanWorkspace = require('./cleanWorkspace')
-const sendEmail = require('./ethereal')
-const fs = require('fs')
-const path = require('path')
+const logger = require("./logger");
+const renameChosenFolders = require("./renameChosenFolders");
+const modifyConfigIni = require("./modifyConfigIni");
+const makeKitZip = require("./makeKitZip");
+const copyFromChosenDB = require("./copyFromChosenDB");
+const registerCustomerInDBCARDAPIO = require("./registerCustomerInDBCARDAPIO");
+const registerCustomerInDBSIAC = require("./registerCustomerInDBSIAC");
+const modifyParamsInDBSIAC = require("./modifyParamsInDBSIAC");
+const packKit = require("./pkg-installer");
+const cleanWorkspace = require("./cleanWorkspace");
+const sendEmail = require("./ethereal");
+const fs = require("fs");
+const path = require("path");
+const copyJobFileToAssets = require("./copyJobFileToAssets");
 
 const Queue = require("@kaliber/firebase-queue");
 
@@ -116,9 +118,19 @@ async function processTask(
 
     await setProgress(30)
     logger.info("=======  30%  =======")
-    await registerCustomerInDBCARDAPIO(task)
-
-    await setProgress(40);
+    await setProgress(30);
+    logger.info("=======  30%  =======");
+    switch (task.kitName) {
+      case "CARDAPIO":
+        await registerCustomerInDBCARDAPIO(task);
+        break;
+      case "SIAC":
+        await registerCustomerInDBSIAC(task);
+        await modifyParamsInDBSIAC(task);
+        break;
+      default:
+        break;
+    }
     logger.info("=======  40%  =======");
     await makeKitZip(task);
 
