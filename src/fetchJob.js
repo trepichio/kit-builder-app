@@ -116,8 +116,6 @@ async function processTask(
     logger.info("=======  20%  =======");
     await modifyConfigIni(task);
 
-    await setProgress(30)
-    logger.info("=======  30%  =======")
     await setProgress(30);
     logger.info("=======  30%  =======");
     switch (task.kitName) {
@@ -129,8 +127,12 @@ async function processTask(
         await modifyParamsInDBSIAC(task);
         break;
       default:
+
+    await setProgress(40);
         break;
     }
+
+    await setProgress(40);
     logger.info("=======  40%  =======");
     await makeKitZip(task);
 
@@ -162,17 +164,25 @@ async function processTask(
     await setProgress(100);
     logger.info("=======  100%  =======");
     // res.send(`Kit ${task.kitName}-v${data.kitVersion} for ${data.customerName} is done! Id: ${data._id}`)
-    logger.info(`Kit ${kitName}-v${kitVersion} for ${customerName} is done! Id: ${snapshot.key}`)
-
+    logger.info(
+      `Kit ${kitName}-v${kitVersion} for ${customerName} is done! Id: ${snapshot.key}`
+    );
+    // return { mailtask: ...task, emailSent: false }
+    return { mailtask: task, emailSent: false, filename: filename };
   } catch (e) {
-    logger.error("========== Caught an exception during job process ==========")
-    await stopProcessing(task)
+    logger.error(
+      "========== Caught an exception during job process =========="
+    );
+    logger.error(`Error: ${e}`);
+    // await stopProcessing(task)
     if (_numRetries > 2) {
       //TODO: Send an alert email to Administrator
-      logger.error("==== reporting Error after all retries are done ====")
-      reportError(e)  // this marks the task as failed
-    }
-    else return { ...task, _numRetries: _numRetries + 1 }
+      logger.error("==== reporting Error after all retries are done ====");
+      reportError(e); // this marks the task as failed
+    } else return { ...task, _numRetries: _numRetries + 1 };
+  } finally {
+    logger.info("=======  CLEANING WORKSPACE FOR ANOTER INCOMING JOB  =======");
+    await cleanWorkspace(task);
   }
 }
 
