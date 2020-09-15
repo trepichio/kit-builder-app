@@ -31,8 +31,43 @@ const kitsRef = firebaseDb.ref("kits");
 //* the queue starts processing as soon as you create an instance
 const queue = new Queue({ tasksRef, processTask, reportError });
 
-// the queue starts processing as soon as you create an instance
-const queue = new Queue({ tasksRef, processTask, reportError })
+/**
+ ** processes tasks from Firebase Queue in order to generate and deploy a customized MBD Kit Installation
+ *
+ * @author João Trepichio
+ * @async
+ * @function processTask
+ * @param  {Number} _numRetries=0 - maximum of retries
+ * @param  {Object} task - object that comes from Firebase queue
+ * @param  {Object} {snapshot - Object that has task plus properties like key
+ * @param  {Function} setProgress}- updates progress in Firebase queue
+ */
+async function processTask(
+  { _numRetries = 0, ...task },
+  { snapshot, setProgress }
+) {
+  if (!!task.mailtask && task.emailSent !== true) {
+    await setProgress(10);
+    logger.info(`Sending E-mail link for Kit of ${task.mailtask.customerName}`);
+    try {
+      await setProgress(30);
+      logger.info("=======  30%  =======");
+      const urlPreview = await sendEmail(task.mailtask, task.filename);
+      await setProgress(100);
+      logger.info("=======  100% - E-mail sent sucessfully! =======");
+      await updateKits(
+        { _id: snapshot.key, ...task.mailtask },
+        { emailSent: true, urlPreview }
+      );
+      return;
+    } catch (error) {
+      if (_numRetries > 2) {
+        //TODO: Send an alert email to Administrator
+        logger.error("==== reporting Error after all retries are done ====");
+        reportError(error); // this marks the task as failed
+      } else return { ...task, _numRetries: _numRetries + 1 };
+    }
+  }
 
   const lastTaskFile = path.resolve("./logs/lastTask.json");
 
@@ -77,7 +112,7 @@ const queue = new Queue({ tasksRef, processTask, reportError })
 
     await setProgress(20);
     logger.info("=======  20%  =======");
-    modifyConfigIni(task)
+    await modifyConfigIni(task);
 
     await setProgress(30)
     logger.info("=======  30%  =======")
