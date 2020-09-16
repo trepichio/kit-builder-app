@@ -1,7 +1,7 @@
 {
   "name": "kit-builder-app",
-  "version": "1.0.0",
-  "description": "builder for MBD Kits",
+  "version": "0.7.0",
+  "description": "a builder for MBD Kits",
   "main": "index.js",
   "dependencies": {
     "@hapi/joi": "^17.0.2",
@@ -18,7 +18,9 @@
     "true-case-path": "^2.2.1",
     "winston": "^3.2.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@appnest/readme": "^1.2.7"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -31,5 +33,10 @@
   "bugs": {
     "url": "https://github.com/trepichio/kit-builder-app/issues"
   },
-  "homepage": "https://github.com/trepichio/kit-builder-app#readme"
+  "homepage": "https://github.com/trepichio/kit-builder-app#readme",
+  "contributors": [{
+    "name": "João Trepichio",
+    "img": "https://avatars2.githubusercontent.com/u/11396817?s=460&u=085712d4f1296e6ad0a220ae7c0ea5278a9c40ed&v=4",
+    "url": "https://trepichio.github.io"
+    }]
 }

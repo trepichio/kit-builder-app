@@ -50,9 +50,9 @@ Veja também o repositório das outras partes desta arquitetura:
 ## ➤ Contributors
 	
 
-| [<img alt="João Trepichio" src="https://avatars2.githubusercontent.com/u/11396817?s=460&u=085712d4f1296e6ad0a220ae7c0ea5278a9c40ed&v=4" width="100">](undefined) |
+| [<img alt="João Trepichio" src="https://avatars2.githubusercontent.com/u/11396817?s=460&u=085712d4f1296e6ad0a220ae7c0ea5278a9c40ed&v=4" width="100">](https://trepichio.github.io) |
 |:--------------------------------------------------:|
-| [João Trepichio](undefined)                      |
+| [João Trepichio](https://trepichio.github.io)    |
 
 
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/cloudy.png)](#license)
